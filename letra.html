@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song.title }}</title>
+    <style>
+        /* Estilos personalizados */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .lyrics-container {
+            column-count: 2;
+            column-gap: 40px;
+        }
+        .lyrics-column {
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            margin-top: 20px;
+            display: block;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        .download-btn {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .classification {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">{{ song.title }}</div>
+        <!-- Mostrar la nota de la canción, si está disponible -->
+        {% if song.note %}
+            <div class="note">Note: {{ song.note }}</div>
+        {% endif %}
+        <!-- Mostrar la clasificación de la canción, si está disponible -->
+        {% if song.classification %}
+            <div class="classification">Classification: {{ song.classification }}</div>
+        {% endif %}
+        <br>
+        {% if editable %}
+        <form action="/edit/{{ song.id }}" method="post">
+            <label for="note">Nota:</label><br>
+            <textarea id="note" name="note" rows="1" required>{{ song.note }}</textarea><br>
+            <label for="classification">Clasificación:</label><br>
+            <textarea id="classification" name="classification" rows="1" required>{{ song.classification }}</textarea><br>
+            <label for="lyrics">Lyrics:</label><br>
+            <textarea id="lyrics" name="lyrics" rows="10" required>{{ song.lyrics }}</textarea><br>
+            <button type="submit">Save Changes</button>
+        </form>
+        {% else %}
+        <div class="lyrics-container">
+            <div class="lyrics-column">
+                {% for line in song.lyrics_lines_1 %}
+                    {{ line }}<br>
+                {% endfor %}
+            </div>
+            <div class="lyrics-column">
+                {% for line in song.lyrics_lines_2 %}
+                    {{ line }}<br>
+                {% endfor %}
+            </div>
+        </div>
+        <br>
+        {% endif %}
+
+        <a href="/search" class="back-btn">Back to Search</a>
+        <!-- Botón de descarga del PDF -->
+        <a href="/download/{{ song.id }}" class="download-btn">Download PDF</a>
+    </div>
+</body>
+</html>

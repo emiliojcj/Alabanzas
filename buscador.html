@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search and Add Songs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="text"], select {
+            width: 40%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .song-details {
+            margin-top: 10px;
+        }
+
+        .return-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .no-results {
+            text-align: center;
+            margin-top: 20px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search and Add Songs</h1>
+        <!-- Formulario de búsqueda -->
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Search by title...">
+            <label for="classification">Classification:</label>
+            <select id="classification" name="classification">
+                <option value="">All</option>
+                <option value="Alabanza">Alabanza</option>
+                <option value="Himno">Himno</option>
+                <!-- Agrega más opciones de clasificación aquí si es necesario -->
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        <!-- Formulario para agregar una nueva canción -->
+        <h2>Add New Song</h2>
+        <form action="/add_song" method="post">
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title" required><br>
+            <label for="lyrics">Lyrics:</label><br>
+            <textarea id="lyrics" name="lyrics" rows="4" required></textarea><br>
+            <label for="note">Note:</label><br>
+            <input type="text" id="note" name="note"><br>
+            <label for="classification">Classification:</label><br>
+            <input type="text" id="classification" name="classification"><br>
+            <button type="submit">Add Song</button>
+        </form>
+        <!-- Lista de canciones -->
+        <h2>Search Results</h2>
+        {% if no_results %}
+            <p class="no-results">No results found.</p>
+        {% endif %}
+        <ul>
+            {% for song in songs %}
+                {% if song.classification|lower in ['alabanza', 'himno'] %}  <!-- Mostrar canciones clasificadas como "Alabanza" o "Himno" -->
+                    <li>
+                        {{ song.title }} - {{ song.note }}
+                        <div class="song-details">
+                            <a href="/download/{{ song.id }}">Download PDF</a> - 
+                            <a href="/lyrics/{{ song.id }}">View Lyrics</a> - 
+                            <a href="/edit/{{ song.id }}">Edit Lyrics</a>
+                        </div>
+                        <!-- Formulario para eliminar una canción -->
+                        <form id="deleteForm_{{ song.id }}" action="/delete/{{ song.id }}" method="post">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit">Delete Song</button>
+                        </form>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <!-- Enlace para volver a la búsqueda -->
+        <div class="return-button">
+            <a href="/reset_search">Back to Search</a>
+        </div>
+    </div>
+</body>
+</html>
